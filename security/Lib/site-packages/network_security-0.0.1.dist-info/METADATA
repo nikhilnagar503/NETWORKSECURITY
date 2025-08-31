@@ -1,0 +1,11 @@
+Metadata-Version: 2.4
+Name: network_security
+Version: 0.0.1
+Summary: A package for network security
+Author: Nikhil Nagar
+Author-email: nagarn603@gmail.com
+License-File: LICENSE
+Dynamic: author
+Dynamic: author-email
+Dynamic: license-file
+Dynamic: summary

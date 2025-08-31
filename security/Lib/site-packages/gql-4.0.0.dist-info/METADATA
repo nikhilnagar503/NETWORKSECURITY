@@ -1,0 +1,257 @@
+Metadata-Version: 2.4
+Name: gql
+Version: 4.0.0
+Summary: GraphQL client for Python
+Home-page: https://github.com/graphql-python/gql
+Author: Syrus Akbary
+Author-email: me@syrusakbary.com
+License: MIT
+Keywords: api graphql protocol rest relay gql client
+Platform: any
+Classifier: Development Status :: 5 - Production/Stable
+Classifier: Intended Audience :: Developers
+Classifier: Topic :: Software Development :: Libraries
+Classifier: Programming Language :: Python :: 3
+Classifier: Programming Language :: Python :: 3 :: Only
+Classifier: Programming Language :: Python :: 3.9
+Classifier: Programming Language :: Python :: 3.10
+Classifier: Programming Language :: Python :: 3.11
+Classifier: Programming Language :: Python :: 3.12
+Classifier: Programming Language :: Python :: 3.13
+Classifier: Programming Language :: Python :: Implementation :: PyPy
+Requires-Python: >=3.8.1
+Description-Content-Type: text/markdown
+License-File: LICENSE
+Requires-Dist: graphql-core<3.3,>=3.2
+Requires-Dist: yarl<2.0,>=1.6
+Requires-Dist: backoff<3.0,>=1.11.1
+Requires-Dist: anyio<5,>=3.0
+Provides-Extra: all
+Requires-Dist: aiohttp<4,>=3.11.2; extra == "all"
+Requires-Dist: requests<3,>=2.26; extra == "all"
+Requires-Dist: requests_toolbelt<2,>=1.0.0; extra == "all"
+Requires-Dist: httpx<1,>=0.27.0; extra == "all"
+Requires-Dist: websockets<16,>=14.2; extra == "all"
+Requires-Dist: botocore<2,>=1.21; extra == "all"
+Requires-Dist: aiofiles; extra == "all"
+Provides-Extra: test
+Requires-Dist: aiohttp<4,>=3.11.2; extra == "test"
+Requires-Dist: requests<3,>=2.26; extra == "test"
+Requires-Dist: requests_toolbelt<2,>=1.0.0; extra == "test"
+Requires-Dist: httpx<1,>=0.27.0; extra == "test"
+Requires-Dist: websockets<16,>=14.2; extra == "test"
+Requires-Dist: botocore<2,>=1.21; extra == "test"
+Requires-Dist: aiofiles; extra == "test"
+Requires-Dist: parse==1.20.2; extra == "test"
+Requires-Dist: pytest==8.3.4; extra == "test"
+Requires-Dist: pytest-asyncio==0.25.3; extra == "test"
+Requires-Dist: pytest-console-scripts==1.4.1; extra == "test"
+Requires-Dist: pytest-cov==6.0.0; extra == "test"
+Requires-Dist: vcrpy==7.0.0; extra == "test"
+Requires-Dist: aiofiles; extra == "test"
+Provides-Extra: test-no-transport
+Requires-Dist: parse==1.20.2; extra == "test-no-transport"
+Requires-Dist: pytest==8.3.4; extra == "test-no-transport"
+Requires-Dist: pytest-asyncio==0.25.3; extra == "test-no-transport"
+Requires-Dist: pytest-console-scripts==1.4.1; extra == "test-no-transport"
+Requires-Dist: pytest-cov==6.0.0; extra == "test-no-transport"
+Requires-Dist: vcrpy==7.0.0; extra == "test-no-transport"
+Requires-Dist: aiofiles; extra == "test-no-transport"
+Provides-Extra: dev
+Requires-Dist: aiohttp<4,>=3.11.2; extra == "dev"
+Requires-Dist: requests<3,>=2.26; extra == "dev"
+Requires-Dist: requests_toolbelt<2,>=1.0.0; extra == "dev"
+Requires-Dist: httpx<1,>=0.27.0; extra == "dev"
+Requires-Dist: websockets<16,>=14.2; extra == "dev"
+Requires-Dist: botocore<2,>=1.21; extra == "dev"
+Requires-Dist: aiofiles; extra == "dev"
+Requires-Dist: black==25.1.0; extra == "dev"
+Requires-Dist: check-manifest<1,>=0.42; extra == "dev"
+Requires-Dist: flake8==7.1.2; extra == "dev"
+Requires-Dist: isort==6.0.1; extra == "dev"
+Requires-Dist: mypy==1.15; extra == "dev"
+Requires-Dist: sphinx<8,>=7.0.0; python_version <= "3.9" and extra == "dev"
+Requires-Dist: sphinx<9,>=8.1.0; python_version > "3.9" and extra == "dev"
+Requires-Dist: sphinx_rtd_theme<4,>=3.0.2; extra == "dev"
+Requires-Dist: sphinx-argparse==0.5.2; extra == "dev"
+Requires-Dist: types-aiofiles; extra == "dev"
+Requires-Dist: types-requests; extra == "dev"
+Requires-Dist: parse==1.20.2; extra == "dev"
+Requires-Dist: pytest==8.3.4; extra == "dev"
+Requires-Dist: pytest-asyncio==0.25.3; extra == "dev"
+Requires-Dist: pytest-console-scripts==1.4.1; extra == "dev"
+Requires-Dist: pytest-cov==6.0.0; extra == "dev"
+Requires-Dist: vcrpy==7.0.0; extra == "dev"
+Requires-Dist: aiofiles; extra == "dev"
+Provides-Extra: aiohttp
+Requires-Dist: aiohttp<4,>=3.11.2; extra == "aiohttp"
+Provides-Extra: requests
+Requires-Dist: requests<3,>=2.26; extra == "requests"
+Requires-Dist: requests_toolbelt<2,>=1.0.0; extra == "requests"
+Provides-Extra: httpx
+Requires-Dist: httpx<1,>=0.27.0; extra == "httpx"
+Provides-Extra: websockets
+Requires-Dist: websockets<16,>=14.2; extra == "websockets"
+Provides-Extra: botocore
+Requires-Dist: botocore<2,>=1.21; extra == "botocore"
+Provides-Extra: aiofiles
+Requires-Dist: aiofiles; extra == "aiofiles"
+Dynamic: author
+Dynamic: author-email
+Dynamic: classifier
+Dynamic: home-page
+Dynamic: keywords
+Dynamic: license
+Dynamic: license-file
+Dynamic: platform
+Dynamic: provides-extra
+Dynamic: requires-dist
+Dynamic: summary
+
+# GQL
+
+This is a GraphQL client for Python.
+Plays nicely with `graphene`, `graphql-core`, `graphql-js` and any other GraphQL implementation
+compatible with the [GraphQL specification](https://spec.graphql.org).
+
+GQL architecture is inspired by `React-Relay` and `Apollo-Client`.
+
+[![GitHub-Actions][gh-image]][gh-url]
+[![pyversion][pyversion-image]][pyversion-url]
+[![pypi][pypi-image]][pypi-url]
+[![Anaconda-Server Badge][conda-image]][conda-url]
+[![codecov][codecov-image]][codecov-url]
+
+[gh-image]: https://github.com/graphql-python/gql/workflows/Tests/badge.svg
+[gh-url]: https://github.com/graphql-python/gql/actions?query=workflow%3ATests
+[pyversion-image]: https://img.shields.io/pypi/pyversions/gql
+[pyversion-url]: https://pypi.org/project/gql/
+[pypi-image]: https://img.shields.io/pypi/v/gql.svg?style=flat
+[pypi-url]: https://pypi.org/project/gql/
+[conda-image]: https://img.shields.io/conda/vn/conda-forge/gql.svg
+[conda-url]: https://anaconda.org/conda-forge/gql
+[codecov-image]: https://codecov.io/gh/graphql-python/gql/branch/master/graph/badge.svg
+[codecov-url]: https://codecov.io/gh/graphql-python/gql
+
+## Documentation
+
+The complete documentation for GQL can be found at
+[gql.readthedocs.io](https://gql.readthedocs.io).
+
+## Features
+
+* Execute GraphQL queries using [different protocols](https://gql.readthedocs.io/en/latest/transports/index.html):
+  * http
+  * websockets:
+    * apollo or graphql-ws protocol
+    * Phoenix channels
+    * AWS AppSync realtime protocol (experimental)
+* Possibility to [validate the queries locally](https://gql.readthedocs.io/en/latest/usage/validation.html) using a GraphQL schema provided locally or fetched from the backend using an instrospection query
+* Supports GraphQL queries, mutations and [subscriptions](https://gql.readthedocs.io/en/latest/usage/subscriptions.html)
+* Supports [sync](https://gql.readthedocs.io/en/latest/usage/sync_usage.html) or [async](https://gql.readthedocs.io/en/latest/usage/async_usage.html) usage, [allowing concurrent requests](https://gql.readthedocs.io/en/latest/advanced/async_advanced_usage.html#async-advanced-usage)
+* Supports [File uploads](https://gql.readthedocs.io/en/latest/usage/file_upload.html)
+* Supports [Custom scalars / Enums](https://gql.readthedocs.io/en/latest/usage/custom_scalars_and_enums.html)
+* Supports [Batching requests](https://gql.readthedocs.io/en/latest/advanced/batching_requests.html)
+* [gql-cli script](https://gql.readthedocs.io/en/latest/gql-cli/intro.html) to execute GraphQL queries or download schemas from the command line
+* [DSL module](https://gql.readthedocs.io/en/latest/advanced/dsl_module.html) to compose GraphQL queries dynamically
+
+## Installation
+
+You can install GQL with all the optional dependencies using pip:
+
+```bash
+# Quotes may be required on certain shells such as zsh.
+pip install "gql[all]"
+```
+
+> **NOTE**: See also [the documentation](https://gql.readthedocs.io/en/latest/intro.html#less-dependencies) to install GQL with less extra dependencies depending on the transports you would like to use or for alternative installation methods.
+
+## Usage
+
+### Sync usage
+
+```python
+from gql import Client, gql
+from gql.transport.aiohttp import AIOHTTPTransport
+
+# Select your transport with a defined url endpoint
+transport = AIOHTTPTransport(url="https://countries.trevorblades.com/")
+
+# Create a GraphQL client using the defined transport
+client = Client(transport=transport)
+
+# Provide a GraphQL query
+query = gql(
+    """
+    query getContinents {
+      continents {
+        code
+        name
+      }
+    }
+"""
+)
+
+# Execute the query on the transport
+result = client.execute(query)
+print(result)
+```
+
+Executing the above code should output the following result:
+
+```
+$ python basic_example.py
+{'continents': [{'code': 'AF', 'name': 'Africa'}, {'code': 'AN', 'name': 'Antarctica'}, {'code': 'AS', 'name': 'Asia'}, {'code': 'EU', 'name': 'Europe'}, {'code': 'NA', 'name': 'North America'}, {'code': 'OC', 'name': 'Oceania'}, {'code': 'SA', 'name': 'South America'}]}
+```
+
+> **WARNING**: Please note that this basic example won't work if you have an asyncio event loop running. In some
+> python environments (as with Jupyter which uses IPython) an asyncio event loop is created for you. In that case you
+> should use instead the [async usage example](https://gql.readthedocs.io/en/latest/usage/async_usage.html#async-usage).
+
+### Async usage
+
+```python
+import asyncio
+
+from gql import Client, gql
+from gql.transport.aiohttp import AIOHTTPTransport
+
+
+async def main():
+
+    # Select your transport with a defined url endpoint
+    transport = AIOHTTPTransport(url="https://countries.trevorblades.com/graphql")
+
+    # Create a GraphQL client using the defined transport
+    client = Client(transport=transport)
+
+    # Provide a GraphQL query
+    query = gql(
+        """
+        query getContinents {
+          continents {
+            code
+            name
+          }
+        }
+    """
+    )
+
+    # Using `async with` on the client will start a connection on the transport
+    # and provide a `session` variable to execute queries on this connection
+    async with client as session:
+
+        # Execute the query
+        result = await session.execute(query)
+        print(result)
+
+
+asyncio.run(main())
+```
+
+## Contributing
+See [CONTRIBUTING.md](CONTRIBUTING.md)
+
+## License
+
+[MIT License](https://github.com/graphql-python/gql/blob/master/LICENSE)
