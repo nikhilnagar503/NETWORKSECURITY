@@ -12,4 +12,6 @@ dagshub
 fastapi
 uvicorn
 python-multipart
+dill
+pickle
 # -e .
