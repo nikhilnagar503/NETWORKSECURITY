@@ -1,0 +1,15 @@
+[ 2025-09-03 21:30:59,074 ] 19 root - INFO - Initiate the data ingestion
+[ 2025-09-03 21:31:03,686 ] 64 root - INFO - Performed train test split
+[ 2025-09-03 21:31:03,686 ] 65 root - INFO - Train set length : 8844
+[ 2025-09-03 21:31:03,686 ] 66 root - INFO - Test set length : 2211
+[ 2025-09-03 21:31:03,686 ] 77 root - INFO - Exporting train and test file path.
+[ 2025-09-03 21:31:03,726 ] 82 root - INFO - Exported train and test file path.
+[ 2025-09-03 21:31:03,726 ] 21 root - INFO - Data ingestion artifact: <network_security.components.data_ingestion.DataIngestion object at 0x0000021EB429F010>
+[ 2025-09-03 21:31:03,729 ] 26 root - INFO - Initiate the data Validation
+[ 2025-09-03 21:31:03,729 ] 74 root - INFO - Starting data validation
+[ 2025-09-03 21:31:03,817 ] 34 root - INFO - Required number of columns: 31
+[ 2025-09-03 21:31:03,817 ] 35 root - INFO - Dataframe has columns: 31
+[ 2025-09-03 21:31:03,817 ] 34 root - INFO - Required number of columns: 31
+[ 2025-09-03 21:31:03,817 ] 35 root - INFO - Dataframe has columns: 31
+[ 2025-09-03 21:31:03,912 ] 28 root - INFO - data Validation Completed
+
