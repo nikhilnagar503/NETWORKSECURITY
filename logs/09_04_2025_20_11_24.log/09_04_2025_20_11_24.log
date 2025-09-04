@@ -1,0 +1,34 @@
+[ 2025-09-04 20:11:26,324 ] 26 root - INFO - Initiate the data ingestion
+[ 2025-09-04 20:11:32,797 ] 63 root - INFO - Performed train test split
+[ 2025-09-04 20:11:32,799 ] 64 root - INFO - Train set length : 8844
+[ 2025-09-04 20:11:32,799 ] 65 root - INFO - Test set length : 2211
+[ 2025-09-04 20:11:32,799 ] 76 root - INFO - Exporting train and test file path.
+[ 2025-09-04 20:11:32,834 ] 81 root - INFO - Exported train and test file path.
+[ 2025-09-04 20:11:32,834 ] 28 root - INFO - Data Initiation Completed
+[ 2025-09-04 20:11:32,834 ] 33 root - INFO - Initiate the data Validation
+[ 2025-09-04 20:11:32,907 ] 74 root - INFO - Starting data validation
+[ 2025-09-04 20:11:33,001 ] 34 root - INFO - Required number of columns: 31
+[ 2025-09-04 20:11:33,001 ] 35 root - INFO - Dataframe has columns: 31
+[ 2025-09-04 20:11:33,001 ] 34 root - INFO - Required number of columns: 31
+[ 2025-09-04 20:11:33,001 ] 35 root - INFO - Dataframe has columns: 31
+[ 2025-09-04 20:11:33,266 ] 35 root - INFO - data Validation Completed
+[ 2025-09-04 20:11:33,266 ] 40 root - INFO - data Transformation started
+[ 2025-09-04 20:11:33,266 ] 63 root - INFO - Entered initiate_data_transformation method of DataTransformation class
+[ 2025-09-04 20:11:33,266 ] 65 root - INFO - Starting data transformation
+[ 2025-09-04 20:11:33,288 ] 48 root - INFO - Entered get_data_trnasformer_object method of Trnasformation class
+[ 2025-09-04 20:11:33,288 ] 53 root - INFO - Initialise KNNImputer with {'missing_values': nan, 'n_neighbors': 3, 'weights': 'uniform'}
+[ 2025-09-04 20:11:33,372 ] 47 root - INFO - Entered the save_object method of MainUtils class
+[ 2025-09-04 20:11:33,378 ] 51 root - INFO - Exited the save_object method of MainUtils class
+[ 2025-09-04 20:11:33,378 ] 47 root - INFO - Entered the save_object method of MainUtils class
+[ 2025-09-04 20:11:33,381 ] 51 root - INFO - Exited the save_object method of MainUtils class
+[ 2025-09-04 20:11:33,387 ] 44 root - INFO - data Transformation completed
+[ 2025-09-04 20:11:33,387 ] 46 root - INFO - Model Training sstared
+[ 2025-09-04 21:09:56,969 ] 78 root - INFO - this is the detail repor {'Random Forest': 0.8581014852722999, 'Decision Tree': 0.8415159445898415, 'Gradient Boosting': 0.8378302688826285, 'Logistic Regression': 0.6922460784477154, 'AdaBoost': 0.7014602677157479}
+[ 2025-09-04 21:09:56,969 ] 88 root - INFO - best model is {best_model_score} with score of {best_model_score} 
+[ 2025-09-04 21:09:57,049 ] 47 root - INFO - Entered the save_object method of MainUtils class
+[ 2025-09-04 21:09:57,049 ] 51 root - INFO - Exited the save_object method of MainUtils class
+[ 2025-09-04 21:09:57,049 ] 47 root - INFO - Entered the save_object method of MainUtils class
+[ 2025-09-04 21:09:57,061 ] 51 root - INFO - Exited the save_object method of MainUtils class
+[ 2025-09-04 21:09:57,061 ] 124 root - INFO - Model trainer artifact: ModelTrainerArtifact(trained_model_file_path='Artifacts\\09_04_2025_20_11_24\\model_trainer\\trained_model\\model.pkl', train_metric_artifact=ClassificationMetricArtifact(f1_score=0.9914495114006515, precision_score=0.9894351889475823, recall_score=0.9934720522235823), test_metric_artifact=ClassificationMetricArtifact(f1_score=0.9695531830763148, precision_score=0.9623233908948194, recall_score=0.9768924302788845))
+[ 2025-09-04 21:09:57,066 ] 51 root - INFO - Model Training artifact created
+
