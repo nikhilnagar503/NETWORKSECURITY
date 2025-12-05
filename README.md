@@ -1,103 +1,118 @@
 # NETWORKSECURITY
 
-An end-to-end pipeline for network security data processing and classification. It ingests data from MongoDB, validates schema and drift, transforms features using KNNImputer, trains classification models, logs metrics to MLflow, and persists the final model.
+An end-to-end, production-style pipeline for phishing detection using URL and website features. The system ingests labeled data from MongoDB, validates schema and drift, transforms features (KNNImputer), trains multiple classifiers with model selection, and logs metrics with MLflow. Final artifacts include a reusable preprocessor and trained model.
 
 ---
 
-## What This Dataset Represents (Phishing Detection)
+## Table of Contents
+- [Overview](#overview)
+- [Dataset](#dataset)
+- [ML Problem](#ml-problem)
+- [Pipeline Architecture](#pipeline-architecture)
+- [Tech Stack](#tech-stack)
+- [Project Structure](#project-structure)
+- [Setup](#setup)
+- [Data Ingestion](#data-ingestion)
+- [Configuration & Constants](#configuration--constants)
+- [MLflow Tracking](#mlflow-tracking)
+- [Run the Pipeline](#run-the-pipeline)
+- [Notes & Best Practices](#notes--best-practices)
+- [License](#license)
 
-Each row corresponds to a website URL, and each column is a feature engineered from that URL, HTML behavior, or domain metadata. Examples:
+---
 
-- `having_IP_Address`: whether the URL directly uses an IP address
-- `URL_Length`: whether the URL is unusually long
-- `SSLfinal_State`: whether SSL appears valid/invalid
-- `having_Sub_Domain`: whether there are excessive subdomains
-- `age_of_domain`: domain age signals
-- JavaScript indicators such as `on_mouseover`, `popUpWidnow`, etc.
+## Overview
+This project builds a phishing URL classifier using a robust ML pipeline:
+- Ingests labeled records from MongoDB
+- Validates schema and detects data drift
+- Transforms features with KNNImputer
+- Trains and evaluates multiple models with grid search
+- Logs metrics and models to MLflow
+- Saves reproducible artifacts for deployment
 
-Most feature values are categorical encodings like `-1`, `0`, `1` (dangerous, suspicious, safe) or `0/1/2`.
+Use cases:
+- Real-time URL phishing detection
+- Browser extensions that flag unsafe sites
+- API service for URL safety scoring
+- Cybersecurity ML portfolio project
 
-The final column:
+---
 
+## Dataset
+Each row represents a website URL with engineered features derived from:
+- URL structure (length, IP usage, subdomains)
+- SSL indicators
+- Domain metadata (age, registrar)
+- JavaScript behaviors (on_mouseover, popups)
+
+Common categorical encodings: -1, 0, 1 or 0/1/2
+
+Target column:
 - `Result` (int64)
-  - `1` → Legitimate (safe, valid)
-  - `-1` → Phishing (fake, unsafe)
-  - Sometimes `0` → Suspicious/Unknown (not always used)
+  - `1` → Legitimate
+  - `-1` → Phishing
+  - `0` → Suspicious/Unknown (optional in some datasets)
 
-This dataset is widely used in cybersecurity + machine learning for phishing URL detection.
+Example row:
+```
+having_IP_Address  URL_Length  SSLfinal_State  ...  Result
+1                  0           -1              ...  -1
+```
 
 ---
 
-## ML Problem Framing
+## ML Problem
+- Task: Binary classification (Phishing vs Legitimate)
+- Goal: Predict whether a URL is phishing based on extracted features
 
-- Task: Binary Classification
-- Goal: Given URL-based features, classify the URL as phishing or legitimate.
-
-Commonly effective models:
+Models commonly effective:
 - Logistic Regression
 - Random Forest
 - Gradient Boosting / XGBoost / LightGBM
 - SVM
 - Simple Neural Networks
 
-Random Forest and XGBoost often perform very well out-of-the-box on this type of data.
-
-Example (imagined) row:
-
-```
-having_IP_Address  URL_Length  SSLfinal_State  ...  Result
-1                  0           -1              ...  -1
-```
-
-Interpretation:
-- IP present → suspicious/dangerous
-- Normal length → okay
-- Invalid SSL → suspicious
-- Result → phishing (`-1`)
-
-Potential applications:
-- Phishing URL detector
-- Browser extension to flag dangerous sites
-- API service for URL safety checks
-- Cybersecurity ML portfolio project
+Random Forest and Gradient Boosting often perform well out-of-the-box for tabular features.
 
 ---
 
-## Key Components
+## Pipeline Architecture
+1) Data Ingestion
+   - Load MongoDB collection → DataFrame
+   - Save feature store CSV and split train/test
 
-- Data ingestion:
-  - Reads labeled phishing/benign network records from MongoDB.
-  - Exports a feature store CSV and splits train/test.
-- Data validation:
-  - Enforces schema column count.
-  - Performs KS test-based dataset drift checks.
-  - Persists a drift report YAML.
-- Data transformation:
-  - Uses `KNNImputer` with parameters defined in constants.
-  - Saves transformed arrays (`.npy`) and the preprocessor object (`preprocessing.pkl`).
-- Model training:
-  - Evaluates multiple classifiers with grid search (RandomForest, DecisionTree, GradientBoosting, LogisticRegression, AdaBoost).
-  - Computes classification metrics (f1, precision, recall).
-  - Logs metrics and model to MLflow.
-  - Saves final model and a combined preprocessor+model wrapper.
+2) Data Validation
+   - Enforce schema (column count)
+   - Detect dataset drift via KS test
+   - Persist drift report YAML
+
+3) Data Transformation
+   - Drop target from features
+   - Normalize target (`-1` → `0` internally for binary models)
+   - Fit `KNNImputer` on train; transform train/test
+   - Save arrays (`.npy`) and preprocessor (`preprocessing.pkl`)
+
+4) Model Training
+   - Evaluate multiple classifiers via grid search
+   - Compute F1, precision, recall on train/test
+   - Log to MLflow
+   - Save final model and combined preprocessor+model wrapper
 
 ---
 
 ## Tech Stack
-
 - Python: 3.9+
-- MongoDB: for source data storage
+- MongoDB (data source)
 - Libraries:
   - pandas, numpy, scikit-learn
   - pymongo, python-dotenv
   - mlflow (local file store)
   - scipy (KS test)
-- Logging: Python logging with rolling timestamped logs
+- Logging: Python `logging` with timestamped logs
 
 ---
 
-## Repository Structure
-
+## Project Structure
 ```
 NETWORKSECURITY/
 ├─ main.py                                  # Orchestrates the full pipeline run
@@ -109,28 +124,26 @@ NETWORKSECURITY/
 │  │  ├─ data_transformation.py            # KNNImputer + save npy + preprocessor
 │  │  └─ model_trainer.py                  # Model selection, MLflow, final save
 │  ├─ constants/
-│  │  └─ training_pipeline/__init__.py     # All constants (paths, names, params)
+│  │  └─ training_pipeline/__init__.py     # Paths, names, params
 │  ├─ entity/
-│  │  ├─ config_entity.py                  # Config dataclasses (paths, thresholds)
-│  │  └─ artifact_entity.py                # Artifact dataclasses (paths, metrics)
+│  │  ├─ config_entity.py                  # Config dataclasses
+│  │  └─ artifact_entity.py                # Artifact dataclasses
 │  ├─ exception/exception.py               # Custom exception class
 │  ├─ logging/logger.py                    # Logging setup
 │  └─ utils/
-│     ├─ main_utils/utils.py               # IO helpers: save/load arrays/objects
+│     ├─ main_utils/utils.py               # IO helpers
 │     └─ ml_utils/...                      # Model wrapper, metrics, evaluation
 ├─ data_schema/schema.yaml                  # Column schema for validation
 ├─ final_model/                             # Persisted preprocessor/model
 └─ logs/                                    # Timestamped run logs
 ```
-
 Note: Some folders are created at runtime (Artifacts/, final_model/, logs/).
 
 ---
 
-## Environment Setup
+## Setup
 
-### 1) Python dependencies
-Create and activate a virtual environment, then install requirements (edit as needed):
+### 1) Python environment
 ```bash
 python3 -m venv .venv
 source .venv/bin/activate
@@ -139,54 +152,43 @@ pip install pandas numpy scikit-learn pymongo python-dotenv mlflow scipy certifi
 ```
 
 ### 2) MongoDB connection
-Add a `.env` file at the repository root:
+Create a `.env` at repository root:
 ```
 MONGO_DB_URL=mongodb+srv://<user>:<password>@<cluster>/<db>?retryWrites=true&w=majority
 ```
-
-The code reads this via `python-dotenv` in both `data_ingestion.py` and `push_data.py`.
+Used in `data_ingestion.py` and `push_data.py` via `python-dotenv`.
 
 ---
 
-## Data Ingestion into MongoDB
+## Data Ingestion
+If your dataset is not yet in MongoDB, use `push_data.py`:
 
-If your raw CSV is not in MongoDB yet, use `push_data.py`:
+Defaults in the script:
+- `FILE_PATH="Network_Data\phisingData.csv"`
+- `DATABASE="Nikhil"`
+- `Collection="NetworkData"`
 
-- Update the CSV path and database/collection names as needed:
-  - Default in script:
-    - FILE_PATH="Network_Data\phisingData.csv"
-    - DATABASE="Nikhil"
-    - Collection="NetworkData"
-- Run:
+Run:
 ```bash
 python push_data.py
 ```
-
-This converts the CSV to JSON records and inserts them into the specified MongoDB collection.
+This converts the CSV to JSON and inserts into the specified MongoDB collection.
 
 ---
 
-## Pipeline Constants and Paths
-
+## Configuration & Constants
 Defined in `network_security/constants/training_pipeline/__init__.py`:
 
 - Target column: `Result`
-- Artifact directories and file names:
-  - Artifacts/ (timestamped)
-  - Data ingestion:
-    - feature_store/phisingData.csv
-    - ingested/train.csv, ingested/test.csv
-  - Data validation:
-    - validated/train.csv, validated/test.csv
-    - drift_report/report.yaml
-  - Data transformation:
-    - transformed/train.npy, transformed/test.npy
-    - transformed_object/preprocessing.pkl
-  - Model trainer:
-    - trained_model/model.pkl
+- Artifacts:
+  - `Artifacts/<timestamp>/`
+  - Data ingestion: `feature_store/phisingData.csv`, `ingested/train.csv`, `ingested/test.csv`
+  - Data validation: `validated/train.csv`, `validated/test.csv`, `drift_report/report.yaml`
+  - Data transformation: `transformed/train.npy`, `transformed/test.npy`, `transformed_object/preprocessing.pkl`
+  - Model trainer: `trained_model/model.pkl`
 - Parameters:
   - Train/test split ratio: `0.2`
-  - KNNImputer params:
+  - KNNImputer:
     ```
     {
       "missing_values": np.nan,
@@ -196,77 +198,37 @@ Defined in `network_security/constants/training_pipeline/__init__.py`:
     ```
   - Expected accuracy: `0.6`
   - Overfitting threshold: `0.05`
-
-MongoDB names:
-- Database: `"Nikhil"`
-- Collection: `"NetworkData"`
+- MongoDB:
+  - Database: `"Nikhil"`
+  - Collection: `"NetworkData"`
 
 ---
 
 ## MLflow Tracking
-
-In `model_trainer.py`, MLflow tracking is configured to a local file store:
+In `model_trainer.py`:
 ```python
 mlflow.set_tracking_uri("file:///C:/desk1/network_security/NETWORKSECURITY/mlruns")
 ```
-
-- Change this path to match your environment.
-- Metrics logged:
-  - `f1_score`, `precision_score`, `recall_score`
-- Models logged via `mlflow.sklearn.log_model(best_model, "model1")`.
-
-To view MLflow UI:
-```bash
-mlflow ui --backend-store-uri file:///C:/desk1/network_security/NETWORKSECURITY/mlruns
-# Then open http://127.0.0.1:5000
+- Update this path for your environment
+- Metrics logged: `f1_score`, `precision_score`, `recall_score`
+- Models logged via:
+```python
+mlflow.sklearn.log_model(best_model, "model1")
 ```
 
-Adjust the path if you changed `set_tracking_uri`.
+To open MLflow UI:
+```bash
+mlflow ui --backend-store-uri file:///C:/desk1/network_security/NETWORKSECURITY/mlruns
+# Visit http://127.0.0.1:5000
+```
 
 ---
 
-## How the Pipeline Runs
-
-`main.py` orchestrates the following:
-
-1) Build configs (timestamped artifact directory):
-   - `TrainingPipelineConfig`
-   - `DataIngestionConfig`, `DataValidationConfig`, `DataTransformationConfig`, `ModelTrainerConfig`
-
-2) Data Ingestion:
-   - `DataIngestion.export_collection_as_dataframe()` reads from MongoDB.
-   - Saves feature store CSV and splits train/test.
-   - Produces `DataIngestionArtifact` with train and test file paths.
-
-3) Data Validation:
-   - Checks number of columns against `data_schema/schema.yaml`.
-   - Runs KS test to detect drift.
-   - Writes drift report YAML.
-   - Produces `DataValidationArtifact`.
-
-4) Data Transformation:
-   - Reads validated train/test CSV.
-   - Drops `Result` from features, normalizes target labels (`-1` → `0` during transformation for binary models).
-   - Fits `KNNImputer` on train, transforms train and test.
-   - Saves `.npy` arrays and `preprocessing.pkl`.
-   - Produces `DataTransformationArtifact`.
-
-5) Model Training:
-   - Evaluates multiple models with parameter grids via `evaluate_models`.
-   - Selects best model by score.
-   - Computes classification metrics on train and test.
-   - Logs metrics and model to MLflow.
-   - Saves final model (`final_model/model.pkl`) and combined wrapper (`trained_model/model.pkl`).
-   - Produces `ModelTrainerArtifact`.
-
----
-
-## Running the Pipeline
-
-1) Ensure MongoDB has data (see ingestion step above).
-2) Ensure `.env` contains `MONGO_DB_URL`.
-3) Optionally adjust MLflow tracking URI in `model_trainer.py`.
-4) Run:
+## Run the Pipeline
+1) Ensure MongoDB has data (see ingestion)
+2) Add `.env` with `MONGO_DB_URL`
+3) Optionally update MLflow tracking URI
+4) Execute:
 ```bash
 python main.py
 ```
@@ -284,29 +246,15 @@ final_model/
 
 ---
 
-## Notes and Tips
-
-- Schema file: Keep `data_schema/schema.yaml` updated with the exact column list used in the dataset; validation strictly checks column count.
-- Target normalization: The pipeline maps `Result == -1` to `0` internally for binary learners; ensure this aligns with your evaluation logic.
-- Environment paths: Update the MLflow tracking URI to a valid local or remote backend for your machine.
-- Error handling: Custom `NetworkSecurityException` captures filename and line number for easier debugging.
+## Notes & Best Practices
+- Keep `data_schema/schema.yaml` aligned with the dataset; validation checks column count strictly
+- Target normalization: `Result == -1` is mapped to `0` internally for binary learners—ensure consistency in evaluation
+- Update MLflow tracking URI to a valid local/remote backend
+- Custom `NetworkSecurityException` includes filename and line number for easier debugging
 
 ---
 
 ## License
-
-MIT License. See `LICENSE` for details.
+MIT License. See [LICENSE](LICENSE) for details.
 
 ---
-
-## Language Help (Optional)
-
-Original: "so it will predict the that website is valid or not"
-
-Improved: "So it will predict whether the website is valid or not?"
-
-Original: "what is this data i mean can you tell me the ml problem that can be frame using this"
-
-Improved: "What is this dataset? Can you tell me what ML problem can be framed using it?"
-
-Keep going—you’re improving fast!
